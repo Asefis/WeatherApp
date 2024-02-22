@@ -1,5 +1,8 @@
 package com.example.WeatherApp.Entity;
 
+import java.sql.Date;
+import java.time.LocalDateTime;
+
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 
 import jakarta.persistence.Entity;
@@ -17,6 +20,17 @@ public class WeatherEntity {
     private Float temp;
     private Float feelsLike;
     private String city;
+    private LocalDateTime updateTime;
+
+
+    public LocalDateTime getUpdateTime() {
+        return updateTime;
+    }
+
+
+    public void setUpdateTime(LocalDateTime updateTime) {
+        this.updateTime = updateTime;
+    }
 
 
     public String getMain() {

@@ -8,11 +8,16 @@ import org.springframework.stereotype.Service;
 
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.Map;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.io.IOException;
+import java.util.Date;
+import java.time.Duration;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
+import com.example.WeatherApp.Entity.WeatherEntity;
 import com.example.WeatherApp.Repository.WeatherRepo;
 
 
@@ -24,7 +29,7 @@ public class WeatherService {
 
 
     
-    public String getWeather(String city){
+    public WeatherEntity getWeather(String city){
         String baseUrl = "http://api.openweathermap.org/geo/1.0/direct";
         String queryParams = String.format("?q=%s&appid=0fca92e2ea86bb3bdf6882f49f492a63", city);
         String result = "";
@@ -64,10 +69,34 @@ public class WeatherService {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        if (result.isEmpty()){
-            return "Ошибка запроса";
+        JSONObject jsonObject1 = new JSONObject(result);
+        String main1 = jsonObject1.getJSONArray("weather").getJSONObject(0).getString("main");
+        String description1 = jsonObject1.getJSONArray("weather").getJSONObject(0).getString("description");
+        Float temp1 = jsonObject1.getJSONObject("main").getFloat("temp");
+        Float fealsLike1 = jsonObject1.getJSONObject("main").getFloat("feels_like");
+        String city1 = jsonObject1.getString("name");
+        LocalDateTime ldt = LocalDateTime.now();
+        WeatherEntity weatherEntity = new WeatherEntity();
+        weatherEntity.setCity(city1);
+        weatherEntity.setDescription(description1);
+        weatherEntity.setFeelsLike(fealsLike1);
+        weatherEntity.setMain(main1);
+        weatherEntity.setTemp(temp1);
+        weatherEntity.setUpdateTime(ldt);
+        return weatherRepo.save(weatherEntity);
+    }
+
+    public boolean updateWeather(WeatherEntity weatherEntity){
+        Date date1 = new Date();
+        Date date2 = java.sql.Timestamp.valueOf(weatherEntity.getUpdateTime());
+        Instant instant1 = date1.toInstant();
+        Instant instant2 = date2.toInstant();
+ 
+        Duration duration = Duration.between(instant1, instant2);
+        if ( duration.toMinutes() > 2){
+            return true;
         }else{
-            return result;
+            return false;
         }
     }
 }
