@@ -9,13 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.WeatherApp.Service.WeatherService;
 
-
-
-
-
-
-
-
 @RestController
 @RequestMapping("/weather")
 public class WeatherController {
